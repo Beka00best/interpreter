@@ -248,13 +248,13 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 						opstack.pop();
 					}
 					break;
-				case PLUS:
-				case MINUS:
 				case ASSIGN:
 					if(opstack.top()->getType() == ASSIGN && ((Oper *)infix[i])->getType() == ASSIGN) {
 						opstack.push((Oper *)infix[i]);				
 					}
 					break;
+				case PLUS:
+				case MINUS:
 				case MULTIPLY:
 					while (!opstack.empty() && (opstack.top()->getPriority()) >= ((Oper *)infix[i])->getPriority()) {
 						postfix.push_back(opstack.top());
