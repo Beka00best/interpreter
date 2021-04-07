@@ -6,6 +6,7 @@
 #include <bits/stdc++.h>
 
 std::map<std::string, int> varTable;
+std::map<std::string, int> labelsTable;
 
 Lexem::Lexem() {}
 
@@ -17,6 +18,8 @@ Number::Number(int number = 0) : Lexem(NUMBER), value(number) {}
 
 Oper::Oper() {}
 
+Oper::Oper(OPERATOR opertype) : opertype(opertype) {}
+
 Variable::Variable(std::string str) : Lexem(TYPE_VAR), name(str) {}
 
 Oper::Oper(std::string str) : Lexem(OPER) {
@@ -25,6 +28,10 @@ Oper::Oper(std::string str) : Lexem(OPER) {
 			opertype = (OPERATOR)i;
 		}
 	}
+}
+
+Goto::Goto(OPERATOR opertype) : Oper(opertype) {
+	row = INT32_MIN;
 }
 
 int Number::getValue() const {
@@ -102,6 +109,22 @@ void Variable::setValue(int value_) {
 
 void Variable::print() {
 	std::cout << name << "(" << varTable[name] << ")";
+}
+
+std::string Variable::getName() {
+	return name;
+}
+
+void Goto::setRow(int row) {
+	Goto::row = row;
+}
+
+int Goto::getRow() {
+	return row;
+}
+
+void Goto::print() {
+	std :: cout << " [ < row " << row << " >" << " ] " ;
 }
 
 void clear_vector(std::vector<Lexem *> v) {

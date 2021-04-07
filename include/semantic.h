@@ -4,5 +4,5 @@
 #include <lexem.h>
 
 int assignOper(Lexem *l, Lexem *r);
-int evaluatePoliz(std::vector<Lexem *> poliz);
+int evaluatePoliz(std::vector<Lexem *> poliz, int row);
 #endif

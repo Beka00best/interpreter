@@ -65,6 +65,15 @@ void do_name(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 	// std::cout << name << std::endl;
 	for (int j = 0; j < OP_NUM; j++) {
 		if(SYMBOLS[j] == name) {
+			// can be improved
+			for (int k = 0; k < 6; k++) {
+				if(SYMBOLS[k] == name) {
+					ptr = new Goto(static_cast<OPERATOR>(j));
+					infix.push_back(ptr);
+					recycle.push_back(ptr);
+					return;
+				}
+			}
 			ptr = new Oper(SYMBOLS[j]);
 			infix.push_back(ptr);
 			recycle.push_back(ptr);

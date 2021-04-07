@@ -3,18 +3,36 @@
 #include <lexem.h>
 #include <const.h>
 
-int evaluatePoliz(std::vector<Lexem *> poliz) {
+int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 	int value = 0;
 	int val;
 	Lexem *l, *r;
 	std::stack<Number *> opstack;
 	for (int i = 0; i < poliz.size(); ++i) {
+		if (poliz[i] == nullptr) {
+			continue;
+		}
 		switch (poliz[i]->getLexType()) {
 		case TYPE_VAR:
 		case NUMBER:
 			opstack.push((Number *)poliz[i]);
 			break;
 		case OPER:
+		if(((Oper *)poliz[i])->getType() == IF || ((Oper *)poliz[i])->getType() == WHILE) {
+			int rvalue = opstack.top()->getValue();
+			opstack.pop();
+			if(!rvalue) {
+				return ((Goto *)poliz[i])->getRow();
+			}
+		}
+			if (((Oper *)poliz[i])->getType() == ELSE || ((Oper *)poliz[i])->getType() == ENDWHILE) {
+				return ((Goto *)poliz[i])->getRow();
+			}
+			if(((Oper *)poliz[i])->getType() == GOTO) {
+				Lexem *label = opstack.top();
+				opstack.pop();
+				return labelsTable[((Variable *)label) -> getName()];
+			}
 			r = opstack.top();
 			opstack.pop();
 			l = opstack.top();
@@ -30,9 +48,12 @@ int evaluatePoliz(std::vector<Lexem *> poliz) {
 			break;
 		}
 	}
-	value = opstack.top()->getValue();
+	if (opstack.top()) {
+		value = opstack.top()->getValue();
+		opstack.pop();
+	}
 	opstack.pop();
-	return value;
+	return row + 1;
 }
 
 int assignOper(Lexem *l, Lexem *r) {

@@ -3,6 +3,8 @@
 #include <bits/stdc++.h>
 #include <const.h>
 
+extern std::map<std::string, int> labelsTable;
+
 class Lexem {
 protected:
 	TYPE_INFO type;
@@ -27,6 +29,7 @@ class Oper : public Lexem {
 	OPERATOR opertype;
 public:
 	Oper();
+	Oper(OPERATOR opertype);
 	Oper(std::string);
 	OPERATOR getType();
 	int getPriority();
@@ -39,9 +42,21 @@ class Variable : public Lexem {
 public:
 	Variable(std::string str);
 	int getValue() const;
+	std::string getName();
 	void setValue(int value_);
 	void print();
 };
+
+class Goto : public Oper {
+	int row;
+public:
+	Goto(OPERATOR opertype);
+	void setRow(int);
+	int getRow();
+	void print();
+};
+
+
 
 extern std::vector<Lexem *> recycle;
 extern Lexem *ptr;

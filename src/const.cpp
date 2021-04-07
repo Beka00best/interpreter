@@ -2,6 +2,10 @@
 #include <bits/stdc++.h>
 
 int PRIORITY[] = {
+	-5, -5,
+	-4, -4,
+	-3, -3,
+	-2, -2,
 	-1, -1,
 	0,
 	1,
@@ -18,6 +22,10 @@ int PRIORITY[] = {
 };
 
 std::string SYMBOLS[] = {
+	"if", "then",
+	"else", "endif",
+	"while", "endwhile",
+	"goto", ":",
 	"(", ")", 
 	"=",
 	"or",
