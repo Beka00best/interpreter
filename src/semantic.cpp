@@ -18,13 +18,13 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 			opstack.push((Number *)poliz[i]);
 			break;
 		case OPER:
-		if(((Oper *)poliz[i])->getType() == IF || ((Oper *)poliz[i])->getType() == WHILE) {
-			int rvalue = opstack.top()->getValue();
-			opstack.pop();
-			if(!rvalue) {
-				return ((Goto *)poliz[i])->getRow();
+			if(((Oper *)poliz[i])->getType() == IF || ((Oper *)poliz[i])->getType() == WHILE) {
+				int rvalue = opstack.top()->getValue();
+				opstack.pop();
+				if(!rvalue) {
+					return ((Goto *)poliz[i])->getRow();
+				}
 			}
-		}
 			if (((Oper *)poliz[i])->getType() == ELSE || ((Oper *)poliz[i])->getType() == ENDWHILE) {
 				return ((Goto *)poliz[i])->getRow();
 			}
