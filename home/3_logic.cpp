@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 
 std::map<std::string, int> varTable;
+Lexem *ptr = nullptr;
 
 enum TYPE_INFO {
 	NUMBER,
@@ -63,6 +64,7 @@ public:
 	Lexem();
 	Lexem(TYPE_INFO t) : type(t) {}
 	virtual void print() {}
+	int virtual getValue() const {}
 	TYPE_INFO getLexType();
 };
 
@@ -89,7 +91,7 @@ class Variable : public Lexem {
 	std::string name;
 public:
 	Variable(std::string str) : Lexem(TYPE_VAR), name(str) {}
-	int getValue();
+	int getValue() const;
 	void setValue(int value_);
 	void print();
 };
@@ -99,48 +101,10 @@ Lexem::Lexem() {}
 Oper::Oper() {}
 
 Oper::Oper(std::string str) : Lexem(OPER) {
-	if (str == "+") {
-		opertype = PLUS;
-	} else if (str == "-") {
-		opertype = MINUS;
-	} else if (str == "*") {
-		opertype = MULTIPLY;
-	} else if (str == "(") {
-		opertype = LBRACKET;
-	} else if (str == ")") {
-		opertype = RBRACKET;
-	} else if (str == "=") {
-		opertype = ASSIGN;
-	} else if (str == "or") {
-		opertype = OR;
-	} else if (str == "and") {
-		opertype = AND;
-	} else if (str == "|") {
-		opertype = BITOR;
-	} else if (str == "^") {
-		opertype = XOR;
-	} else if (str == "&") {
-		opertype = BITAND;
-	} else if (str == "==") {
-		opertype = EQ;
-	} else if (str == "!=") {
-		opertype = NEQ;
-	} else if (str == "<=") {
-		opertype = LEQ;
-	} else if (str == "<") {
-		opertype = LT;
-	} else if (str == ">=") {
-		opertype = GEQ;
-	} else if (str == ">") {
-		opertype = GT;
-	} else if (str == "<<") {
-		opertype = SHL;
-	} else if (str == ">>") {
-		opertype = SHR;
-	} else if (str == "/") {
-		opertype = DIV;
-	} else if (str == "%") {
-		opertype = MOD;
+	for (int i = 0; i < sizeof(SYMBOLS) / sizeof(std::string); i++) {
+		if(SYMBOLS[i] == str) {
+			opertype = (OPERATOR)i;
+		}
 	}
 }
 
@@ -172,8 +136,6 @@ int Oper::getValue(const Number &left, const Number &right) {
 		return left.getValue() + right.getValue();
 	case MULTIPLY:
 		return left.getValue() * right.getValue();
-	case ASSIGN:
-		return right.getValue();
 	case OR:
 		return left.getValue() || right.getValue(); 
 	case AND:
@@ -211,7 +173,7 @@ TYPE_INFO Lexem::getLexType() {
 	return type;
 }
 
-int Variable::getValue() {
+int Variable::getValue() const {
 	return varTable[name];
 }
 
@@ -222,9 +184,6 @@ void Variable::setValue(int value_) {
 void Variable::print() {
 	std::cout << name << "(" << varTable[name] << ")";
 }
-
-
-
 
 void print_vector(std::vector<Lexem *> infix) {
 	for (int i = 0; i < infix.size(); i++) {
@@ -246,6 +205,7 @@ void do_digit(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 		i++;
 	}
 	// i--;
+	
 	infix.push_back(new Number(number));
 }
 
@@ -346,9 +306,6 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 			if(!opstack.empty()) {
 				current = ((Oper *)infix[i])->getType();
 				switch (current) {
-				case LBRACKET:
-					opstack.push((Oper *)infix[i]);
-					break;
 				case RBRACKET:
 					while (opstack.top()->getType() != LBRACKET) {
 						postfix.push_back(opstack.top());
@@ -363,9 +320,7 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 						opstack.push((Oper *)infix[i]);				
 					}
 					break;
-				case PLUS:
-				case MINUS:
-				case MULTIPLY:
+				default:
 					while (!opstack.empty() && (opstack.top()->getPriority()) >= ((Oper *)infix[i])->getPriority()) {
 						postfix.push_back(opstack.top());
 						opstack.pop();
@@ -404,7 +359,7 @@ int evaluatePoliz(std::vector<Lexem *> poliz) {
 			if(((Oper *)poliz[i])->getType() == ASSIGN) {
 				val = assignOper(l, r);
 			} else {
-				val = ((Oper *)poliz[i])->getValue(((Number *)l)->getValue(), ((Number *)r)->getValue());
+				val = ((Oper *)poliz[i])->getValue((l)->getValue(), (r)->getValue());
 			}
 			opstack.push(new Number(val));
 			break;
