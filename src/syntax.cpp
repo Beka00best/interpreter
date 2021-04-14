@@ -5,14 +5,14 @@
 
 void initJumps(std::vector< std::vector<Lexem *>> infix) {
 	std::stack<Goto *> stackIfElse, stackWhile;
-	OPERATOR current;
+	int current;
 	for (int row = 0; row < infix.size(); row++) {
 		for (int i = 0; i < infix[row].size(); i++) {
 			if (infix[row][i] == nullptr) {
 				continue;
 			}
 			if (infix[row][i] -> getLexType() == OPER) {
-				current = ((Oper *)infix[row][i]) -> getType();
+				current = infix[row][i] -> getType();
 				switch (current) {
 					case IF:
 						stackIfElse.push((Goto *)infix[row][i]);
@@ -51,14 +51,18 @@ void initJumps(std::vector< std::vector<Lexem *>> infix) {
 	}
 }
 
+void joinGotoAndLabel(Lexem *lexemvar, std::vector<Lexem *> &postfix) {
+	if (postfix.back()->getType() == GOTO) {
+		Goto *lexemgoto = (Goto *)postfix.back();
+		lexemgoto->setRow(lexemvar->getName());
+	}
+}
 
 void initLabels(std::vector<Lexem *> &infix, int row) {
-	for (int i = 1; i < infix.size(); i++) {
+	for (int i = 1; i < (int)infix.size(); i++) {
 		if (infix[i - 1] -> getLexType() == TYPE_VAR && infix[i] -> getLexType() == OPER) {
-			Variable *lexvar = (Variable *)infix[i - 1];
-			Oper *lexoper = (Oper *)infix[i];
-			if (lexoper -> getType() == COLON) {
-				labelsTable[lexvar->getName()] = row;
+			if (infix[i] -> getType() == COLON) {
+				labelsTable[infix[i - 1]->getName()] = row;
 				delete infix[i - 1];
 				delete infix[i];
 				infix[i - 1] = nullptr;
@@ -73,19 +77,23 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 	std::vector<Lexem *> postfix;
 	std::stack<Oper *> opstack;
-	OPERATOR current;
+	int current;
 	for (int i = 0; i < infix.size(); i++) {
 		if (infix[i] == nullptr) {
 			continue;
 		}
 		switch (infix[i]->getLexType()) {
 		case TYPE_VAR:
+			if (infix[i]->inLabTable() == true) {
+				joinGotoAndLabel(infix[i], postfix);
+				break;
+			}
 		case NUMBER:
 			postfix.push_back(infix[i]);
 			break;
 		case OPER:
 			if(!opstack.empty()) {
-				current = ((Oper *)infix[i])->getType();
+				current = infix[i]->getType();
 				switch (current) {
 				case ENDIF:
 				case ENDWHILE:
@@ -101,7 +109,7 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 					}
 					break;
 				case ASSIGN:
-					if(opstack.top()->getType() == ASSIGN && ((Oper *)infix[i])->getType() == ASSIGN) {
+					if(opstack.top()->getType() == ASSIGN && infix[i]->getType() == ASSIGN) {
 						opstack.push((Oper *)infix[i]);				
 					}
 					break;

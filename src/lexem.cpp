@@ -30,8 +30,15 @@ Oper::Oper(std::string str) : Lexem(OPER) {
 	}
 }
 
-Goto::Goto(OPERATOR opertype) : Oper(opertype) {
+Goto::Goto() {}
+
+Goto::Goto(int opertype) {
 	row = INT32_MIN;
+	oper = opertype;
+}
+
+int Number::getType() {
+	return NUMBER;
 }
 
 int Number::getValue() const {
@@ -39,10 +46,10 @@ int Number::getValue() const {
 }
 
 void Number::print() {
-	std::cout << value;
+	std::cout << "[" << value << "]";
 }
 
-OPERATOR Oper::getType() {
+int Oper::getType() {
 	return opertype;
 }
 
@@ -51,7 +58,7 @@ int Oper::getPriority() {
 }
 
 void Oper::print() {
-	std::cout << SYMBOLS[opertype];
+	std::cout << "[" << SYMBOLS[opertype] << "]";
 }
 
 int Oper::getValue(const Number &left, const Number &right) {
@@ -99,6 +106,10 @@ TYPE_INFO Lexem::getLexType() {
 	return type;
 }
 
+int Variable::getType() {
+	return TYPE_VAR;
+}
+
 int Variable::getValue() const{
 	return varTable[name];
 }
@@ -108,7 +119,14 @@ void Variable::setValue(int value_) {
 }
 
 void Variable::print() {
-	std::cout << name << "(" << varTable[name] << ")";
+	std::cout << "[" << name << "(" << varTable[name] << ")" << "]";
+}
+
+bool Variable::inLabTable() {
+    if (labelsTable.find(name) != labelsTable.end()) {
+        return true;
+    }
+    return false;
 }
 
 std::string Variable::getName() {
@@ -119,12 +137,16 @@ void Goto::setRow(int row) {
 	Goto::row = row;
 }
 
+void Goto::setRow(const std::string &name) {
+	row = labelsTable[name];
+}
+
 int Goto::getRow() {
 	return row;
 }
 
 void Goto::print() {
-	std :: cout << " [ < row " << row << " >" << " ] " ;
+	std :: cout << "[" << SYMBOLS[oper] << " -> " << "row = "<< row << "]" ;
 }
 
 void clear_vector(std::vector<Lexem *> v) {
@@ -137,10 +159,27 @@ void clear_vector(std::vector<Lexem *> v) {
 
 void print_vector(std::vector<Lexem *> infix) {
 	for (int i = 0; i < infix.size(); i++) {
+		if (infix[i] == nullptr) {
+			continue;
+		}
 		infix[i]->print();
 		std::cout << " ";
 	}
 	std::cout << std::endl;
+}
+
+void print_vector_vector(std::vector<std::vector<Lexem *>> infix) {
+	for (int i = 0; i < (int)infix.size(); i++) {
+		std::cout << i << ": ";
+		print_vector(infix[i]);
+	}
+}
+
+void printMap() {
+    std::cout << "VarTable" << std::endl;
+    for (std::map<std::string,int>::iterator it = varTable.begin(); it != varTable.end(); it++) {
+        std::cout << it->first << " = " << it->second << std::endl;
+    }
 }
 
 std::vector<Lexem *> recycle;

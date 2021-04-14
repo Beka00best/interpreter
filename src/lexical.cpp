@@ -5,21 +5,22 @@
 
 std::vector<Lexem *> parseLexem(std::string codeline) {
 	std::vector<Lexem *> infix;
+	Lexem *ptr = nullptr;
 	for (int i = 0; i < codeline.size();) {
 		if (isspace(codeline[i])) {
 			i++;
 			continue;
-		} else if (isdigit(codeline[i])) {
+		} 
+		if (isdigit(codeline[i])) {
 			do_digit(infix, codeline, i);
-		} else if (is_oper(to_str(codeline[i]))) {
-			do_oper(infix, codeline, i);
-		} else if (is_symbol(codeline[i])) {
-			do_name(infix, codeline, i);
+		} else {
+			ptr = do_oper(infix, codeline, i);
+			if (ptr == nullptr) {
+				do_name(infix, codeline, i);
+			}
 		}
-		// } else {
-		// 	do_name(infix, codeline, i);
-		// }
 	}
+	// print_vector(infix);
 	return infix;
 }
 
@@ -30,6 +31,7 @@ std::string to_str(char ch) {
 
 void do_digit(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 	int number = 0;
+	Lexem *ptr = nullptr;
 	while (isdigit(codeline[i])) {
 		number = number * 10 + codeline[i] - '0';
 		i++;
@@ -58,45 +60,39 @@ bool is_symbol(char ch) {
 
 void do_name(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 	std::string name;
+	Lexem *ptr = nullptr;
+	if (!is_symbol(codeline[i])) {
+		return;
+	}
 	while (is_symbol(codeline[i]) || isdigit(codeline[i])) {
 		name += codeline[i];
 		i++;
 	}
 	// std::cout << name << std::endl;
-	for (int j = 0; j < OP_NUM; j++) {
-		if(SYMBOLS[j] == name) {
-			// can be improved
-			for (int k = 0; k < 6; k++) {
-				if(SYMBOLS[k] == name) {
-					ptr = new Goto(static_cast<OPERATOR>(j));
-					infix.push_back(ptr);
-					recycle.push_back(ptr);
-					return;
-				}
-			}
-			ptr = new Oper(SYMBOLS[j]);
-			infix.push_back(ptr);
-			recycle.push_back(ptr);
-			return;
-		}
-	}
-	// i--;
-	infix.push_back(new Variable(name));
+	ptr = new Variable(name); 
+	infix.push_back(ptr);
+	recycle.push_back(ptr);
 }
 
-void do_oper(std::vector<Lexem *> &infix, std::string codeline, int &i) {
-	int len = OP_NUM, init;
+Lexem *do_oper(std::vector<Lexem *> &infix, std::string codeline, int &i) {
+	int init;
 	int cnt;
-	for (int j = 0;  j < len; j++) {
+	Lexem *ptr = nullptr;
+	for (int j = 0;  j < OP_NUM; j++) {
 		init = SYMBOLS[j].size();
 		if (codeline.substr(i, init) == SYMBOLS[j]) {
 			// std::cout << j << " " << SYMBOLS[j] << std::endl;
 			i += init;
-			cnt = j;
+			if (j == GOTO) {
+				// std::cout << SYMBOLS[j] << std::endl;
+				ptr = new Goto(j);
+			} else {
+				ptr = new Oper(SYMBOLS[j]); 
+			}
+			infix.push_back(ptr);
+			recycle.push_back(ptr);
+			return ptr;
 		}
 	}
-	// i--;
-	ptr = new Oper(SYMBOLS[cnt]); 
-	infix.push_back(ptr);
-	recycle.push_back(ptr);
+	return nullptr;
 }
