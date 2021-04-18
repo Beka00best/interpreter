@@ -18,30 +18,33 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 			opstack.push((Number *)poliz[i]);
 			break;
 		case OPER:
-			if (poliz[i]->getType() == PRINT) {
-				std::cout << opstack.top() -> getValue();
-				break;
-			}
-			if(poliz[i]->getType() == IF || poliz[i]->getType() == WHILE) {
-				int rvalue = opstack.top()->getValue();
+			// if (poliz[i]->getType() == PRINT) {
+			// 	std::cout << opstack.top() -> getValue();
+			// 	break;
+			// }
+			if (poliz[i]->getType() == GOTO ||
+				poliz[i]->getType() == ELSE ||
+				poliz[i]->getType() == ENDWHILE) {
+				// std::cout << "OK" << std::endl;
+				Goto *lexemgoto = (Goto *)poliz[i];
+				return lexemgoto->getRow();
+			} else if (poliz[i]->getType() == IF || poliz[i]->getType() == WHILE) {
+				Goto *lexemgoto = (Goto *)poliz[i];
+				Number *rvalue = opstack.top();
 				opstack.pop();
-				if(!rvalue) {
-					return ((Goto *)poliz[i])->getRow();
+				std::cout << "if OK" << std::endl;
+				if (!(rvalue->getValue())) {
+					return lexemgoto->getRow();
 				}
+				// std::cout << rvalue->getValue() << " rvalue" << std::endl;
+				continue;
 			}
-			if (poliz[i]->getType() == ELSE || poliz[i]->getType() == ENDWHILE) {
-				return ((Goto *)poliz[i])->getRow();
-			}
-			if(((Oper *)poliz[i])->getType() == GOTO) {
-				Lexem *label = opstack.top();
-				opstack.pop();
-				return labelsTable[((Variable *)label) -> getName()];
-			}
+			// std::cout << "OK1" << std::endl;
 			r = opstack.top();
 			opstack.pop();
 			l = opstack.top();
 			opstack.pop();
-			if(((Oper *)poliz[i])->getType() == ASSIGN) {
+			if(poliz[i]->getType() == ASSIGN) {
 				val = assignOper(l, r);
 			} else {
 				val = ((Oper *)poliz[i])->getValue((l)->getValue(), (r)->getValue());
@@ -52,12 +55,14 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 			break;
 		}
 	}
-	if (opstack.top()) {
+	if (!opstack.empty()) {
 		value = opstack.top()->getValue();
-		std::cout << value << std::endl;
 		opstack.pop();
 	}
-	opstack.pop();
+	if (value) {
+		std::cout << value << std::endl;
+	}
+	// opstack.pop();
 	return row + 1;
 }
 

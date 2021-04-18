@@ -36,15 +36,17 @@ void initJumps(std::vector< std::vector<Lexem *>> infix) {
 						break;
 					case WHILE:
 						((Goto *)infix[row][i]) -> setRow(row);
-							stackWhile.push((Goto *)infix[row][i]);
+						stackWhile.push((Goto *)infix[row][i]);
+						break;
 					case ENDWHILE:
-						if (stackIfElse.empty()) {
+						if (stackWhile.empty()) {
 							perror("empty stackwhile wrong syntax: endwhile");
 							exit(1);
 						}
 						((Goto *)infix[row][i]) -> setRow(stackWhile.top() -> getRow());
 						stackWhile.top() -> setRow(row + 1);
 						stackWhile.pop();
+						break;
 				}
 			}
 		}
@@ -53,6 +55,7 @@ void initJumps(std::vector< std::vector<Lexem *>> infix) {
 
 void joinGotoAndLabel(Lexem *lexemvar, std::vector<Lexem *> &postfix) {
 	if (postfix.back()->getType() == GOTO) {
+		// std::cout << "yes" << std::endl;
 		Goto *lexemgoto = (Goto *)postfix.back();
 		lexemgoto->setRow(lexemvar->getName());
 	}
@@ -62,6 +65,7 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 	for (int i = 1; i < (int)infix.size(); i++) {
 		if (infix[i - 1] -> getLexType() == TYPE_VAR && infix[i] -> getLexType() == OPER) {
 			if (infix[i] -> getType() == COLON) {
+				// std::cout << infix[i - 1]->getName() << std::endl;
 				labelsTable[infix[i - 1]->getName()] = row;
 				delete infix[i - 1];
 				delete infix[i];
@@ -84,21 +88,36 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 		}
 		switch (infix[i]->getLexType()) {
 		case TYPE_VAR:
-			if (infix[i]->inLabTable() == true) {
+			if (infix[i]->inLabelTable()) {
+			// 	// std::cout << infix[i] << std::endl;
 				joinGotoAndLabel(infix[i], postfix);
 				break;
 			}
+			// std::cout << "VAR" << std::endl;
 		case NUMBER:
+			// std::cout << "NUM" << std::endl;
 			postfix.push_back(infix[i]);
 			break;
 		case OPER:
-			if(!opstack.empty()) {
-				current = infix[i]->getType();
+			current = infix[i]->getType();
+			// std::cout << "current" << std::endl;
+			// if(!opstack.empty()) {
 				switch (current) {
+				case THEN:
 				case ENDIF:
-				case ENDWHILE:
+					continue;
+				case GOTO:
+					while (!opstack.empty()) {
+						// std::cout << "OK" << std::endl;
+						postfix.push_back(opstack.top());
+						opstack.pop();
+					}
 					postfix.push_back(infix[i]);
 					break;
+				// case ENDIF:
+				// case ENDWHILE:
+				// 	postfix.push_back(infix[i]);
+				// 	break;
 				case RBRACKET:
 					while (opstack.top()->getType() != LBRACKET) {
 						postfix.push_back(opstack.top());
@@ -106,11 +125,6 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 					}
 					if (!opstack.empty()) {
 						opstack.pop();
-					}
-					break;
-				case ASSIGN:
-					if(opstack.top()->getType() == ASSIGN && infix[i]->getType() == ASSIGN) {
-						opstack.push((Oper *)infix[i]);				
 					}
 					break;
 				default:
@@ -121,9 +135,9 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 					opstack.push((Oper *)infix[i]);
 					break;
 				}
-			} else {
-				opstack.push((Oper *)infix[i]);
-			}
+			// } else {
+			// 	opstack.push((Oper *)infix[i]);
+			// }
 		}
 	}
 	while (!opstack.empty()) {

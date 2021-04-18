@@ -6,15 +6,14 @@
 extern std::map<std::string, int> labelsTable;
 
 class Lexem {
-protected:
-	TYPE_INFO type;
 public:
+	TYPE_INFO type;
 	Lexem();
 	Lexem(TYPE_INFO t);
 	virtual void print() {}
 	virtual int getValue() const{}
 	virtual int getType() {}
-	virtual bool inLabTable() {}
+	virtual bool inLabelTable() {}
 	virtual std::string getName() {}
 	TYPE_INFO getLexType();
 	virtual ~Lexem();
@@ -29,7 +28,7 @@ public:
 	void print();
 };
 
-class Oper : public Lexem {
+class Oper :  public Lexem {
 	OPERATOR opertype;
 public:
 	Oper();
@@ -47,7 +46,7 @@ public:
 	Variable(std::string str);
 	int getType();
 	int getValue() const;
-	bool inLabTable();
+	bool inLabelTable();
 	std::string getName();
 	void setValue(int value_);
 	void print();
@@ -55,12 +54,13 @@ public:
 
 class Goto : public Oper {
 	int row;
-	int oper;
+	OPERATOR oper;
 public:
 	Goto();
-	Goto(int opertype);
+	Goto(OPERATOR opertype);
 	void setRow(int);
-	void setRow(const std::string &name);
+	void setRow(const std::string name);
+	int getType();
 	int getRow();
 	void print();
 };
@@ -72,6 +72,7 @@ extern Lexem *ptr;
 void print_vector(std::vector<Lexem *> infix);
 void print_vector_vector(std::vector<std::vector<Lexem *>> infix);
 void clear_vector(std::vector<Lexem *> v);
+void clear_lines(std::vector<std::vector<Lexem *>> infix);
 void printMap();
 
 

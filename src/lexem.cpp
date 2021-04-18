@@ -32,7 +32,7 @@ Oper::Oper(std::string str) : Lexem(OPER) {
 
 Goto::Goto() {}
 
-Goto::Goto(int opertype) {
+Goto::Goto(OPERATOR opertype) : Oper(SYMBOLS[opertype]){
 	row = INT32_MIN;
 	oper = opertype;
 }
@@ -122,7 +122,7 @@ void Variable::print() {
 	std::cout << "[" << name << "(" << varTable[name] << ")" << "]";
 }
 
-bool Variable::inLabTable() {
+bool Variable::inLabelTable() {
     if (labelsTable.find(name) != labelsTable.end()) {
         return true;
     }
@@ -137,7 +137,7 @@ void Goto::setRow(int row) {
 	Goto::row = row;
 }
 
-void Goto::setRow(const std::string &name) {
+void Goto::setRow(const std::string name) {
 	row = labelsTable[name];
 }
 
@@ -146,7 +146,11 @@ int Goto::getRow() {
 }
 
 void Goto::print() {
-	std :: cout << "[" << SYMBOLS[oper] << " -> " << "row = "<< row << "]" ;
+	std :: cout << "[<row "<< row << ">" << SYMBOLS[oper] << "]" ;
+}
+
+int Goto::getType() {
+	return oper;
 }
 
 void clear_vector(std::vector<Lexem *> v) {
@@ -155,6 +159,12 @@ void clear_vector(std::vector<Lexem *> v) {
     for (auto it: v) {
         delete it;
     }
+}
+
+void clear_lines(std::vector<std::vector<Lexem *>> infix) {
+	for (int i = 0; i < infix.size(); ++i) {
+		clear_vector(infix[i]);
+	}
 }
 
 void print_vector(std::vector<Lexem *> infix) {

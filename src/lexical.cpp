@@ -83,9 +83,9 @@ Lexem *do_oper(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 		if (codeline.substr(i, init) == SYMBOLS[j]) {
 			// std::cout << j << " " << SYMBOLS[j] << std::endl;
 			i += init;
-			if (j == GOTO) {
+			if (j == GOTO || j == IF || j == ELSE || j == WHILE || j == ENDWHILE) {
 				// std::cout << SYMBOLS[j] << std::endl;
-				ptr = new Goto(j);
+				ptr = new Goto(static_cast<OPERATOR>(j));
 			} else {
 				ptr = new Oper(SYMBOLS[j]); 
 			}
