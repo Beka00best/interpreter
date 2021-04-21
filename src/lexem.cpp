@@ -7,6 +7,8 @@
 
 std::map<std::string, int> varTable;
 std::map<std::string, int> labelsTable;
+std::map<std::string, std::vector<int>> arrayTable;
+std::map<std::string, int> arraySizeTable;
 
 Lexem::Lexem() {}
 
@@ -35,6 +37,30 @@ Goto::Goto() {}
 Goto::Goto(OPERATOR opertype) : Oper(SYMBOLS[opertype]){
 	row = INT32_MIN;
 	oper = opertype;
+}
+
+Array::Array() {}
+
+Array::Array(std::string str) : Lexem(ARRTYPE) {
+	arrayName = str;
+}
+
+Array::Array(int size_) {
+	if (size_ < 0) {
+		perror("Error: array");
+	}
+	if (!arraySizeTable.count(arrayName)) {
+		arraySizeTable[arrayName] = size_;
+		// int *values = new int[size_];
+		// std::fill(values, values + size_, 0);
+		// memset(values, 0, size_);
+		for (int i = 0; i < size_; i++) {
+			data.push_back(0);
+		}
+		arrayTable[arrayName] = data;
+	} else {
+		perror("WTF allocate?");
+	}
 }
 
 int Number::getType() {
@@ -151,6 +177,27 @@ void Goto::print() {
 
 int Goto::getType() {
 	return oper;
+}
+
+void Array::setIndex(int index_) {
+	if (index_ < 0 || (arraySizeTable.count(arrayName) && index_ > arraySizeTable[arrayName])) {
+		perror("Invalid index");
+	}
+	index = index_;
+}
+
+int Array::getValue() const{
+	return data[index]; 
+}
+
+void Array::setValue(int value) {
+	data[index] = value;
+}
+
+void Array::print() {
+	std::cout << arrayName << ": ";
+	for (std::vector<int>::iterator it=data.begin(); it!=data.end(); ++it)
+    std::cout << ' ' << *it;
 }
 
 void clear_vector(std::vector<Lexem *> v) {

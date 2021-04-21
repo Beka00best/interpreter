@@ -3,6 +3,8 @@
 #include <lexem.h>
 #include <const.h>
 
+int Lbr = 0;
+
 std::vector<Lexem *> parseLexem(std::string codeline) {
 	std::vector<Lexem *> infix;
 	Lexem *ptr = nullptr;
@@ -20,6 +22,7 @@ std::vector<Lexem *> parseLexem(std::string codeline) {
 			}
 		}
 	}
+	Lbr = 0;
 	// print_vector(infix);
 	return infix;
 }
@@ -69,7 +72,11 @@ void do_name(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 		i++;
 	}
 	// std::cout << name << std::endl;
-	ptr = new Variable(name); 
+	if (i < codeline.size() && (codeline[i] == '[')) {
+		ptr = new Array(name);
+	} else {
+		ptr = new Variable(name); 
+	}
 	infix.push_back(ptr);
 	recycle.push_back(ptr);
 }
@@ -86,6 +93,16 @@ Lexem *do_oper(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 			if (j == GOTO || j == IF || j == ELSE || j == WHILE || j == ENDWHILE) {
 				// std::cout << SYMBOLS[j] << std::endl;
 				ptr = new Goto(static_cast<OPERATOR>(j));
+			} else if (j == LSQUBR) {
+				if (!Lbr) {
+					Lbr = 1;
+					ptr = new Oper(SYMBOLS[LSQUBR]);
+				} else {
+					ptr = new Oper(SYMBOLS[RSQUBR]);
+				}
+			} else if (j == RSQUBR) {
+				// ptr = new Oper(RSQUBR);
+				continue;
 			} else {
 				ptr = new Oper(SYMBOLS[j]); 
 			}

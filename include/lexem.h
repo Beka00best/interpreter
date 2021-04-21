@@ -4,6 +4,8 @@
 #include <const.h>
 
 extern std::map<std::string, int> labelsTable;
+extern std::map<std::string, std::vector<int>> arrayTable;
+extern std::map<std::string, int> arraySizeTable;
 
 class Lexem {
 public:
@@ -28,7 +30,7 @@ public:
 	void print();
 };
 
-class Oper :  public Lexem {
+class Oper : public Lexem {
 	OPERATOR opertype;
 public:
 	Oper();
@@ -62,6 +64,20 @@ public:
 	void setRow(const std::string name);
 	int getType();
 	int getRow();
+	void print();
+};
+
+class Array : public Lexem {
+	std::string arrayName;
+	int index;
+	std::vector<int>data;
+public:
+	Array();
+	Array(std::string);
+	Array(int);
+	void setIndex(int);
+	int getValue() const;
+	void setValue(int);
 	void print();
 };
 

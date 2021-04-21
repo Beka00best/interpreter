@@ -94,6 +94,7 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 				break;
 			}
 			// std::cout << "VAR" << std::endl;
+		case ARRTYPE:
 		case NUMBER:
 			// std::cout << "NUM" << std::endl;
 			postfix.push_back(infix[i]);
@@ -101,43 +102,36 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 		case OPER:
 			current = infix[i]->getType();
 			// std::cout << "current" << std::endl;
-			// if(!opstack.empty()) {
-				switch (current) {
-				case THEN:
-				case ENDIF:
-					continue;
-				case GOTO:
-					while (!opstack.empty()) {
-						// std::cout << "OK" << std::endl;
-						postfix.push_back(opstack.top());
-						opstack.pop();
-					}
-					postfix.push_back(infix[i]);
-					break;
-				// case ENDIF:
-				// case ENDWHILE:
-				// 	postfix.push_back(infix[i]);
-				// 	break;
-				case RBRACKET:
-					while (opstack.top()->getType() != LBRACKET) {
-						postfix.push_back(opstack.top());
-						opstack.pop();
-					}
-					if (!opstack.empty()) {
-						opstack.pop();
-					}
-					break;
-				default:
-					while (!opstack.empty() && (opstack.top()->getPriority()) >= ((Oper *)infix[i])->getPriority()) {
-						postfix.push_back(opstack.top());
-						opstack.pop();
-					}
-					opstack.push((Oper *)infix[i]);
-					break;
+			switch (current) {
+			case THEN:
+			case ENDIF:
+				break;
+			case GOTO:
+				while (!opstack.empty()) {
+					// std::cout << "OK" << std::endl;
+					postfix.push_back(opstack.top());
+					opstack.pop();
 				}
-			// } else {
-			// 	opstack.push((Oper *)infix[i]);
-			// }
+				postfix.push_back(infix[i]);
+				break;
+			case LBRACKET:
+				opstack.push((Oper *)infix[i]);
+				break;
+			case RBRACKET:
+				while (opstack.top()->getType() != LBRACKET) {
+					postfix.push_back(opstack.top());
+					opstack.pop();
+				}
+				opstack.pop();
+				break;
+			default:
+				while (!opstack.empty() && (opstack.top()->getPriority()) >= ((Oper *)infix[i])->getPriority()) {
+					postfix.push_back(opstack.top());
+					opstack.pop();
+				}
+				opstack.push((Oper *)infix[i]);
+				break;
+			}
 		}
 	}
 	while (!opstack.empty()) {
