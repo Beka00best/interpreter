@@ -55,7 +55,6 @@ void initJumps(std::vector< std::vector<Lexem *>> infix) {
 
 void joinGotoAndLabel(Lexem *lexemvar, std::vector<Lexem *> &postfix) {
 	if (postfix.back()->getType() == GOTO) {
-		// std::cout << "yes" << std::endl;
 		Goto *lexemgoto = (Goto *)postfix.back();
 		lexemgoto->setRow(lexemvar->getName());
 	}
@@ -65,7 +64,6 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 	for (int i = 1; i < (int)infix.size(); i++) {
 		if (infix[i - 1] -> getLexType() == TYPE_VAR && infix[i] -> getLexType() == OPER) {
 			if (infix[i] -> getType() == COLON) {
-				// std::cout << infix[i - 1]->getName() << std::endl;
 				labelsTable[infix[i - 1]->getName()] = row;
 				delete infix[i - 1];
 				delete infix[i];
@@ -75,13 +73,14 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 			}
 		}
 	}
-	// add repeated method handler
 }
 
 std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 	std::vector<Lexem *> postfix;
 	std::stack<Oper *> opstack;
 	int current;
+	int LvalueFlag = 0;
+	Oper *tmp;
 	for (int i = 0; i < infix.size(); i++) {
 		if (infix[i] == nullptr) {
 			continue;
@@ -89,38 +88,43 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 		switch (infix[i]->getLexType()) {
 		case TYPE_VAR:
 			if (infix[i]->inLabelTable()) {
-			// 	// std::cout << infix[i] << std::endl;
 				joinGotoAndLabel(infix[i], postfix);
 				break;
 			}
-			// std::cout << "VAR" << std::endl;
 		case ARRTYPE:
 		case NUMBER:
-			// std::cout << "NUM" << std::endl;
 			postfix.push_back(infix[i]);
 			break;
 		case OPER:
 			current = infix[i]->getType();
-			// std::cout << "current" << std::endl;
 			switch (current) {
 			case THEN:
 			case ENDIF:
 				break;
 			case GOTO:
 				while (!opstack.empty()) {
-					// std::cout << "OK" << std::endl;
 					postfix.push_back(opstack.top());
 					opstack.pop();
 				}
 				postfix.push_back(infix[i]);
 				break;
+			case LVALUE:
+				LvalueFlag = 1;
+				tmp = (Oper *)infix[i];
+			case RVALUE:
 			case LBRACKET:
 				opstack.push((Oper *)infix[i]);
 				break;
+			case RSQUBR:
 			case RBRACKET:
-				while (opstack.top()->getType() != LBRACKET) {
+				while (opstack.top()->getType() != LBRACKET and 
+				opstack.top()->getType() != LVALUE and 
+				opstack.top()->getType() != RVALUE) {
 					postfix.push_back(opstack.top());
 					opstack.pop();
+				}
+				if(opstack.top()->getType() == RVALUE) {
+					postfix.push_back(opstack.top());
 				}
 				opstack.pop();
 				break;
@@ -134,9 +138,25 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 			}
 		}
 	}
+	Oper *ptr = new Oper(SYMBOLS[RVALUE]);
+	recycle.push_back(ptr);
+	if (opstack.empty() and LvalueFlag) {
+		postfix.push_back(ptr);
+	}
 	while (!opstack.empty()) {
-		postfix.push_back(opstack.top());
+		if (opstack.top()->getType() == ASSIGN && LvalueFlag) {
+			opstack.pop();
+			postfix.push_back(tmp);
+			break;
+		} 
+		if (LvalueFlag) {
+			postfix.push_back(ptr);
+			postfix.push_back(opstack.top());
+		} else {
+			postfix.push_back(opstack.top());
+		}
 		opstack.pop();
 	}
+	LvalueFlag = 0;
 	return postfix;
 }

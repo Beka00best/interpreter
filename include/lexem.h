@@ -4,7 +4,7 @@
 #include <const.h>
 
 extern std::map<std::string, int> labelsTable;
-extern std::map<std::string, std::vector<int>> arrayTable;
+extern std::map<std::string, int *> arrayTable;
 extern std::map<std::string, int> arraySizeTable;
 
 class Lexem {
@@ -38,7 +38,7 @@ public:
 	Oper(std::string);
 	int getType();
 	int getPriority();
-	int getValue(const Number &left, const Number &right);
+	int getValue(Lexem *, Lexem *);
 	void print();
 };
 
@@ -74,7 +74,8 @@ class Array : public Lexem {
 public:
 	Array();
 	Array(std::string);
-	Array(int);
+	void setSize(int);
+	std::string getName();
 	void setIndex(int);
 	int getValue() const;
 	void setValue(int);
@@ -90,6 +91,7 @@ void print_vector_vector(std::vector<std::vector<Lexem *>> infix);
 void clear_vector(std::vector<Lexem *> v);
 void clear_lines(std::vector<std::vector<Lexem *>> infix);
 void printMap();
+void print_arrs();
 
 
 

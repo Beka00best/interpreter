@@ -23,7 +23,6 @@ std::vector<Lexem *> parseLexem(std::string codeline) {
 		}
 	}
 	Lbr = 0;
-	// print_vector(infix);
 	return infix;
 }
 
@@ -39,7 +38,6 @@ void do_digit(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 		number = number * 10 + codeline[i] - '0';
 		i++;
 	}
-	// i--;
 	ptr = new Number(number);
 	infix.push_back(ptr);
 	recycle.push_back(ptr);
@@ -71,7 +69,6 @@ void do_name(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 		name += codeline[i];
 		i++;
 	}
-	// std::cout << name << std::endl;
 	if (i < codeline.size() && (codeline[i] == '[')) {
 		ptr = new Array(name);
 	} else {
@@ -88,21 +85,16 @@ Lexem *do_oper(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 	for (int j = 0;  j < OP_NUM; j++) {
 		init = SYMBOLS[j].size();
 		if (codeline.substr(i, init) == SYMBOLS[j]) {
-			// std::cout << j << " " << SYMBOLS[j] << std::endl;
 			i += init;
 			if (j == GOTO || j == IF || j == ELSE || j == WHILE || j == ENDWHILE) {
-				// std::cout << SYMBOLS[j] << std::endl;
 				ptr = new Goto(static_cast<OPERATOR>(j));
 			} else if (j == LSQUBR) {
 				if (!Lbr) {
 					Lbr = 1;
-					ptr = new Oper(SYMBOLS[LSQUBR]);
+					ptr = new Oper(SYMBOLS[LVALUE]);
 				} else {
-					ptr = new Oper(SYMBOLS[RSQUBR]);
+					ptr = new Oper(SYMBOLS[RVALUE]);
 				}
-			} else if (j == RSQUBR) {
-				// ptr = new Oper(RSQUBR);
-				continue;
 			} else {
 				ptr = new Oper(SYMBOLS[j]); 
 			}
