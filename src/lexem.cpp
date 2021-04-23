@@ -9,6 +9,7 @@ std::map<std::string, int> varTable;
 std::map<std::string, int> labelsTable;
 std::map<std::string, int *> arrayTable;
 std::map<std::string, int> arraySizeTable;
+std::map<std::string, int> functionsTable;
 
 Lexem::Lexem() {}
 

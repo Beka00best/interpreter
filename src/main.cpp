@@ -13,10 +13,11 @@ int main() {
 		infix.push_back(parseLexem(codeline));
 	}
 	std::cout << "infix:" << std::endl;
-	// print_vector_vector(infix);		
+	print_vector_vector(infix);		
 	for (int row = 0; row < infix.size(); ++row) {
 		initLabels(infix[row], row);
 	}
+	std::cout << "initlabel:" << std::endl;
 	print_vector_vector(infix);
 	initJumps(infix);
 	std::cout << "initJumps" << std::endl;

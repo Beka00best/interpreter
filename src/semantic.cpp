@@ -26,21 +26,17 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 			if (poliz[i]->getType() == GOTO ||
 				poliz[i]->getType() == ELSE ||
 				poliz[i]->getType() == ENDWHILE) {
-				// std::cout << "OK" << std::endl;
 				Goto *lexemgoto = (Goto *)poliz[i];
 				return lexemgoto->getRow();
 			} else if (poliz[i]->getType() == IF || poliz[i]->getType() == WHILE) {
 				Goto *lexemgoto = (Goto *)poliz[i];
 				Lexem *rvalue = opstack.top();
 				opstack.pop();
-				// std::cout << "if OK" << std::endl;
 				if (!(rvalue->getValue())) {
 					return lexemgoto->getRow();
 				}
-				// std::cout << rvalue->getValue() << " rvalue" << std::endl;
-				continue;
+				break;
 			}
-			// std::cout << "OK1" << std::endl;
 			r = opstack.top();
 			opstack.pop();
 			l = opstack.top();
@@ -56,7 +52,6 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 			if(poliz[i]->getType() == ASSIGN) {
 				val = assignOper(l, r);
 			} else {
-				// std::cout << "OK OPER" << std::endl;
 				val = ((Oper *)poliz[i])->getValue(l, r);
 			}
 			ptr = new Number(val);

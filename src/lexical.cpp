@@ -86,7 +86,7 @@ Lexem *do_oper(std::vector<Lexem *> &infix, std::string codeline, int &i) {
 		init = SYMBOLS[j].size();
 		if (codeline.substr(i, init) == SYMBOLS[j]) {
 			i += init;
-			if (j == GOTO || j == IF || j == ELSE || j == WHILE || j == ENDWHILE) {
+			if (j == GOTO || j == IF || j == ELSE || j == WHILE || j == ENDWHILE || j == FUNCTION) {
 				ptr = new Goto(static_cast<OPERATOR>(j));
 			} else if (j == LSQUBR) {
 				if (!Lbr) {

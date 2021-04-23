@@ -6,7 +6,8 @@ enum TYPE_INFO {
 	NUMBER,
 	OPER,
 	TYPE_VAR,
-	ARRTYPE
+	ARRTYPE,
+	FUNC
 };
 
 enum OPERATOR {

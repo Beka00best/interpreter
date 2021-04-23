@@ -5,6 +5,7 @@
 
 void initJumps(std::vector< std::vector<Lexem *>> infix) {
 	std::stack<Goto *> stackIfElse, stackWhile;
+	std::stack<int> stackFunction;
 	int current;
 	for (int row = 0; row < infix.size(); row++) {
 		for (int i = 0; i < infix[row].size(); i++) {
@@ -68,6 +69,14 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 				delete infix[i - 1];
 				delete infix[i];
 				infix[i - 1] = nullptr;
+				infix[i] = nullptr;
+				i++;
+			}
+		}
+		if (infix[i - 1] -> getLexType() == OPER && infix[i - 1] -> getType() == FUNCTION) {
+			if (!functionsTable.count(infix[i]->getName())) {
+				functionsTable[infix[i]->getName()] = row;
+				delete infix[i];
 				infix[i] = nullptr;
 				i++;
 			}

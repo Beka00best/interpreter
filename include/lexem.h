@@ -6,7 +6,7 @@
 extern std::map<std::string, int> labelsTable;
 extern std::map<std::string, int *> arrayTable;
 extern std::map<std::string, int> arraySizeTable;
-
+extern std::map<std::string, int> functionsTable;
 class Lexem {
 public:
 	TYPE_INFO type;
