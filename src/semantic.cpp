@@ -13,6 +13,9 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 			continue;
 		}
 		switch (poliz[i]->getLexType()) {
+		case FUNC:
+			std::cout << "lf fjjfjfjfjfj" << std::endl;
+			break;
 		case ARRTYPE:
 		case TYPE_VAR:
 		case NUMBER:

@@ -76,11 +76,22 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 		if (infix[i - 1] -> getLexType() == OPER && infix[i - 1] -> getType() == FUNCTION) {
 			if (!functionsTable.count(infix[i]->getName())) {
 				functionsTable[infix[i]->getName()] = row;
+				((Function *)infix[i])->setNumberArg(infix.size() - i - 3);
 				delete infix[i];
+				delete infix[i + 1];
+				delete infix[infix.size() - 1];
+				infix[infix.size() - 1] = nullptr;
+				infix[i + 1] = nullptr;
 				infix[i] = nullptr;
-				i++;
+				return;
 			}
 		}
+	}
+	if (functionsTable.find(infix[0]->getName()) != functionsTable.end()) {
+		Function *func = new Function(infix[0]->getName());
+		delete infix[0];
+		infix[0] = func;
+		recycle.push_back(func);
 	}
 }
 
@@ -107,6 +118,9 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 		case OPER:
 			current = infix[i]->getType();
 			switch (current) {
+			case FUNCTION:
+			case ENDFUNCTION:
+			case RETURN:
 			case THEN:
 			case ENDIF:
 				break;

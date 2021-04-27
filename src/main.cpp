@@ -27,7 +27,9 @@ int main() {
 	}
 	std::cout << "postfix:" << std::endl;
 	print_vector_vector(postfix);	
-	int row = 0;
+	printMap();
+	int row = findMain(postfix);
+	// std::cout << "row " << row << std::endl;
 	while (0 <= row and row < (int)postfix.size()) {
 		row = evaluatePoliz(postfix[row], row);
 	}

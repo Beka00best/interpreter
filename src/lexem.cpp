@@ -10,6 +10,7 @@ std::map<std::string, int> labelsTable;
 std::map<std::string, int *> arrayTable;
 std::map<std::string, int> arraySizeTable;
 std::map<std::string, int> functionsTable;
+std::stack<int> Global_suka_stack;
 
 Lexem::Lexem() {}
 
@@ -44,6 +45,12 @@ Array::Array() {}
 
 Array::Array(std::string str) : Lexem(ARRTYPE) {
 	arrayName = str;
+}
+
+Function::Function() {}
+
+Function::Function(std::string str) : Lexem(FUNC) {
+	functionName = str;
 }
 
 int Number::getType() {
@@ -210,8 +217,6 @@ void Array::setValue(int value) {
 
 void Array::print() {
 	std::cout << arrayName << ": ";
-	// for (std::vector<int>::iterator it=arrayTable[arrayName].begin(); it!=arrayTable[arrayName].end(); ++it)
-  //   std::cout << ' ' << *it;
 	for (int i = 0; i < arraySizeTable[arrayName]; i++) {
 		std::cout << (arrayTable[arrayName])[i] << ' ';
 	}
@@ -219,6 +224,27 @@ void Array::print() {
 
 std::string Array::getName() {
 	return arrayName;
+}
+
+void Function::setRow(int row) {
+	jumpRow = row;
+	functionsTable[functionName] = row;
+}
+
+void Function::setNumberArg(int num) {
+	numberArgument = num;
+}
+
+int Function::getRow() {
+	return jumpRow;
+}
+
+int Function::getNumberArg() {
+	return numberArgument;
+}
+
+void Function::print() {
+	std::cout << "[" << functionName << " -> " << functionsTable[functionName] << "]";
 }
 
 void clear_vector(std::vector<Lexem *> v) {
@@ -271,6 +297,21 @@ void print_arrs() {
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+}
+
+int findMain(std::vector<std::vector<Lexem *>> postfix) {
+	int begin = 0;
+	for (int i = 0; i < postfix.size(); i++) {
+		for (int j = 0; j < postfix[i].size(); j++) {
+			if (postfix[i][j] == nullptr) {
+				continue;
+			}
+			if (postfix[i][j] -> getLexType() == OPER && postfix[i][j] -> getType() == RETURN) {
+				begin = i + 1;
+			}
+		}
+	}
+	return begin;
 }
 
 std::vector<Lexem *> recycle;
