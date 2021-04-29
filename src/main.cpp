@@ -22,12 +22,12 @@ int main() {
 	initJumps(infix);
 	std::cout << "initJumps" << std::endl;
 	print_vector_vector(infix);
+	printMap();
 	for (int row = 0; row < (int)infix.size(); ++row) {
 		postfix.push_back(buildPoliz(infix[row]));
 	}
 	std::cout << "postfix:" << std::endl;
 	print_vector_vector(postfix);	
-	printMap();
 	// int row = findMain(postfix);
 	int row = 0;
 	// std::cout << "row " << row << std::endl;

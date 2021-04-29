@@ -10,6 +10,7 @@ std::map<std::string, int> labelsTable;
 std::map<std::string, int *> arrayTable;
 std::map<std::string, int> arraySizeTable;
 std::map<std::string, int> functionsTable;
+std::map<std::string, int> returnRow;
 std::stack<int> Global_suka_stack;
 
 Lexem::Lexem() {}
@@ -63,6 +64,10 @@ int Number::getValue() const {
 
 void Number::print() {
 	std::cout << "[" << value << "]";
+}
+
+std::string Number::getName() {
+	return "";
 }
 
 int Oper::getType() {
@@ -229,7 +234,6 @@ std::string Array::getName() {
 void Function::setRow(int row) {
 	jumpRow = row;
 	functionsTable[functionName] = row;
-	// ((Goto *)this)->setRow(row);
 }
 
 void Function::setNumberArg(int num) {
@@ -282,7 +286,7 @@ void print_vector_vector(std::vector<std::vector<Lexem *>> infix) {
 
 void printMap() {
 	std::cout << "VarTable" << std::endl;
-	for (std::map<std::string,int>::iterator it = varTable.begin(); it != varTable.end(); it++) {
+	for (std::map<std::string,int>::iterator it = functionsTable.begin(); it != functionsTable.end(); it++) {
 		std::cout << it->first << " = " << it->second << std::endl;
 	}
 }

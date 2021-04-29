@@ -8,6 +8,8 @@ extern std::map<std::string, int> labelsTable;
 extern std::map<std::string, int *> arrayTable;
 extern std::map<std::string, int> arraySizeTable;
 extern std::map<std::string, int> functionsTable;
+extern std::map<std::string, int> returnRow;
+
 class Lexem {
 public:
 	TYPE_INFO type;
@@ -29,6 +31,7 @@ public:
 	int getType();
 	int getValue() const;
 	void print();
+	std::string getName();
 };
 
 class Oper : public Lexem {

@@ -74,36 +74,35 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 			}
 		}
 		if (infix[i - 1] -> getLexType() == OPER && infix[i - 1] -> getType() == FUNCTION) {
+			std::cout << "ROW: " << row << std::endl;
 			if (!functionsTable.count(infix[i]->getName())) {
 				functionsTable[infix[i]->getName()] = row;
 				((Function *)infix[i])->setNumberArg(infix.size() - i - 3);
-				delete infix[i];
+				// delete infix[i];
 				delete infix[i + 1];
 				delete infix[infix.size() - 1];
 				infix[infix.size() - 1] = nullptr;
 				infix[i + 1] = nullptr;
-				infix[i] = nullptr;
+				// infix[i] = nullptr;
 				return;
 			}
 		}
-	}
-	if (infix[0] != nullptr) {
-		// std::cout << "degub " << row << std::endl;
-		if (functionsTable.find(infix[0]->getName()) != functionsTable.end()) {
-			Function *func = new Function(infix[0]->getName());
-			// std::cout << "degub " << row << std::endl;
-			func->setRow(row);
-			delete infix[0];
-			infix[0] = func;
-			recycle.push_back(func);
+		if (infix.size() != 0) {
+			if (functionsTable.count(infix[i - 1]->getName())) {
+				Function *func = new Function(infix[i - 1]->getName());
+				func->setRow(functionsTable[infix[i - 1]->getName()]);
+				delete infix[i - 1];
+				infix[i - 1] = func;
+				recycle.push_back(func);
+				i++;
+			}
 		}
-		// std::cout << "degub " << row << std::endl;
 	}
 }
 
 std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 	std::vector<Lexem *> postfix;
-	std::stack<Oper *> opstack;
+	std::stack<Lexem *> opstack;
 	int current;
 	int LvalueFlag = 0;
 	Oper *tmp;
@@ -112,12 +111,14 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 			continue;
 		}
 		switch (infix[i]->getLexType()) {
+		case FUNC:
+			opstack.push(infix[i]);
+			break;
 		case TYPE_VAR:
 			if (infix[i]->inLabelTable()) {
 				joinGotoAndLabel(infix[i], postfix);
 				break;
 			}
-		case FUNC:
 		case ARRTYPE:
 		case NUMBER:
 			postfix.push_back(infix[i]);
@@ -126,8 +127,6 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 			current = infix[i]->getType();
 			switch (current) {
 			case FUNCTION:
-			case ENDFUNCTION:
-			case RETURN:
 			case THEN:
 			case ENDIF:
 				break;
@@ -143,7 +142,7 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 				tmp = (Oper *)infix[i];
 			case RVALUE:
 			case LBRACKET:
-				opstack.push((Oper *)infix[i]);
+				opstack.push(infix[i]);
 				break;
 			case RSQUBR:
 			case RBRACKET:
@@ -159,11 +158,11 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 				opstack.pop();
 				break;
 			default:
-				while (!opstack.empty() && (opstack.top()->getPriority()) >= ((Oper *)infix[i])->getPriority()) {
+				while (!opstack.empty() && (((Oper *)opstack.top())->getPriority()) >= ((Oper *)infix[i])->getPriority()) {
 					postfix.push_back(opstack.top());
 					opstack.pop();
 				}
-				opstack.push((Oper *)infix[i]);
+				opstack.push(infix[i]);
 				break;
 			}
 		}
