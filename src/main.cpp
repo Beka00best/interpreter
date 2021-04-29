@@ -28,10 +28,11 @@ int main() {
 	std::cout << "postfix:" << std::endl;
 	print_vector_vector(postfix);	
 	printMap();
-	int row = findMain(postfix);
+	// int row = findMain(postfix);
+	int row = 0;
 	// std::cout << "row " << row << std::endl;
 	while (0 <= row and row < (int)postfix.size()) {
-		row = evaluatePoliz(postfix[row], row);
+		row = evaluatePoliz(postfix, row, &value);
 	}
 	std::cout << "eval:" << std::endl;
 	print_vector_vector(postfix);

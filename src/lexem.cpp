@@ -229,6 +229,7 @@ std::string Array::getName() {
 void Function::setRow(int row) {
 	jumpRow = row;
 	functionsTable[functionName] = row;
+	// ((Goto *)this)->setRow(row);
 }
 
 void Function::setNumberArg(int num) {

@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include <const.h>
 
+extern std::map<std::string, int> varTable;
 extern std::map<std::string, int> labelsTable;
 extern std::map<std::string, int *> arrayTable;
 extern std::map<std::string, int> arraySizeTable;
@@ -82,8 +83,29 @@ public:
 	void print();
 };
 
+class Function : public Lexem {
+	std::string functionName;
+	int jumpRow;
+	int numberArgument;
+public:
+	Function();
+	Function(std::string);
+	void setRow(int);
+	void setNumberArg(int);
+	int getRow();
+	int getNumberArg();
+	void print();
+};
+
+struct Space {
+	std::map<std::string, int> varTable;
+	std::map<std::string, int *> arrayTable;
+	std::map<std::string, int> arraySizeTable;
+};
 
 
+
+extern std::stack<int> Global_suka_stack;
 extern std::vector<Lexem *> recycle;
 extern Lexem *ptr;
 void print_vector(std::vector<Lexem *> infix);
@@ -92,6 +114,8 @@ void clear_vector(std::vector<Lexem *> v);
 void clear_lines(std::vector<std::vector<Lexem *>> infix);
 void printMap();
 void print_arrs();
+int findMain(std::vector<std::vector<Lexem *>> postfix);
+
 
 
 

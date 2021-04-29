@@ -87,11 +87,17 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 			}
 		}
 	}
-	if (functionsTable.find(infix[0]->getName()) != functionsTable.end()) {
-		Function *func = new Function(infix[0]->getName());
-		delete infix[0];
-		infix[0] = func;
-		recycle.push_back(func);
+	if (infix[0] != nullptr) {
+		// std::cout << "degub " << row << std::endl;
+		if (functionsTable.find(infix[0]->getName()) != functionsTable.end()) {
+			Function *func = new Function(infix[0]->getName());
+			// std::cout << "degub " << row << std::endl;
+			func->setRow(row);
+			delete infix[0];
+			infix[0] = func;
+			recycle.push_back(func);
+		}
+		// std::cout << "degub " << row << std::endl;
 	}
 }
 
@@ -111,6 +117,7 @@ std::vector<Lexem *> buildPoliz(std::vector<Lexem *> infix) {
 				joinGotoAndLabel(infix[i], postfix);
 				break;
 			}
+		case FUNC:
 		case ARRTYPE:
 		case NUMBER:
 			postfix.push_back(infix[i]);

@@ -3,9 +3,12 @@
 #include <lexem.h>
 #include <const.h>
 
-int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
+int evaluatePoliz(std::vector<std::vector<Lexem *>> postfix, int row, int *mainval) {
+	std::vector<Lexem *> poliz = postfix[row];
 	int value = 0;
 	int val;
+	int Row;
+	int nextVal;
 	Lexem *l, *r;
 	std::stack<Lexem *> opstack;
 	for (int i = 0; i < poliz.size(); ++i) {
@@ -14,7 +17,11 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 		}
 		switch (poliz[i]->getLexType()) {
 		case FUNC:
-			std::cout << "lf fjjfjfjfjfj" << std::endl;
+			Row = ((Function *)poliz[i])->getRow();
+			while (poliz[Row] != nullptr) {
+				Row = evaluatePoliz(postfix, Row, &nextVal);
+			}
+			value = nextVal;
 			break;
 		case ARRTYPE:
 		case TYPE_VAR:
@@ -68,9 +75,9 @@ int evaluatePoliz(std::vector<Lexem *> poliz, int row) {
 		opstack.pop();
 	}
 	if (value) {
+		(*mainval) = value;
 		// std::cout << value << std::endl; 
 	}
-	// opstack.pop();
 	return row + 1;
 }
 
