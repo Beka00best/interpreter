@@ -1,0 +1,25 @@
+function a(n)
+return n
+f=5
+print a(f)
+exit
+infix:
+0: [function] [a(0)] [(] [n(0)] [)] 
+1: [return] [n(0)] 
+2: [f(0)] [=] [5] 
+3: [print] [a(0)] [(] [f(0)] [)] 
+initlabel:
+0: [function] [n(0)] 
+1: [return] [n(0)] 
+2: [f(0)] [=] [5] 
+3: [print] [a -> 0] [(] [f(0)] [)] 
+initJumps
+0: [function] [n(0)] 
+1: [return] [n(0)] 
+2: [f(0)] [=] [5] 
+3: [print] [a -> 0] [(] [f(0)] [)] 
+postfix:
+0: [n(0)] [function] 
+1: [n(0)] [return] 
+2: [f(0)] [5] [=] 
+3: [f(0)] [a -> 0] [print] 
