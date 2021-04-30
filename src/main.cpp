@@ -22,20 +22,21 @@ int main() {
 	initJumps(infix);
 	std::cout << "initJumps" << std::endl;
 	print_vector_vector(infix);
-	printMap();
 	for (int row = 0; row < (int)infix.size(); ++row) {
 		postfix.push_back(buildPoliz(infix[row]));
 	}
 	std::cout << "postfix:" << std::endl;
 	print_vector_vector(postfix);	
-	// int row = findMain(postfix);
-	int row = 0;
+	Space space;
+	globalSpace.push(space);
+	// int row = 0;
+	int row = findMain(postfix);
 	// std::cout << "row " << row << std::endl;
 	while (0 <= row and row < (int)postfix.size()) {
 		row = evaluatePoliz(postfix, row, &value);
 	}
-	std::cout << "eval:" << std::endl;
-	print_vector_vector(postfix);
+	// std::cout << "eval:" << std::endl;
+	// print_vector_vector(postfix);
 	printMap();
 	print_arrs();
 	// clear_vector(recycle);

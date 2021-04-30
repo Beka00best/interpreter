@@ -11,7 +11,9 @@ std::map<std::string, int *> arrayTable;
 std::map<std::string, int> arraySizeTable;
 std::map<std::string, int> functionsTable;
 std::map<std::string, int> returnRow;
-std::stack<int> Global_suka_stack;
+std::stack<Lexem *> returnFunctionStack;
+std::stack<Lexem *> prevVariables;
+std::stack<Space> globalSpace;
 
 Lexem::Lexem() {}
 
@@ -80,6 +82,10 @@ int Oper::getPriority() {
 
 void Oper::print() {
 	std::cout << "[" << SYMBOLS[opertype] << "]";
+}
+
+std::string Oper::getName() {
+	return "";
 }
 
 int Oper::getValue(Lexem *left, Lexem *right) {
@@ -248,6 +254,10 @@ int Function::getNumberArg() {
 	return numberArgument;
 }
 
+std::string Function::getName() {
+	return functionName;
+}
+
 void Function::print() {
 	std::cout << "[" << functionName << " -> " << functionsTable[functionName] << "]";
 }
@@ -286,7 +296,7 @@ void print_vector_vector(std::vector<std::vector<Lexem *>> infix) {
 
 void printMap() {
 	std::cout << "VarTable" << std::endl;
-	for (std::map<std::string,int>::iterator it = functionsTable.begin(); it != functionsTable.end(); it++) {
+	for (std::map<std::string,int>::iterator it = varTable.begin(); it != varTable.end(); it++) {
 		std::cout << it->first << " = " << it->second << std::endl;
 	}
 }

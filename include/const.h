@@ -40,5 +40,6 @@ enum OPERATOR {
 extern int PRIORITY[]; 
 extern std::string SYMBOLS[];
 extern int OP_NUM;
+extern int Index;
 
 #endif

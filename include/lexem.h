@@ -43,6 +43,7 @@ public:
 	int getType();
 	int getPriority();
 	int getValue(Lexem *, Lexem *);
+	std::string getName();
 	void print();
 };
 
@@ -94,6 +95,7 @@ public:
 	Function();
 	Function(std::string);
 	void setRow(int);
+	std::string getName();
 	void setNumberArg(int);
 	int getRow();
 	int getNumberArg();
@@ -104,13 +106,16 @@ struct Space {
 	std::map<std::string, int> varTable;
 	std::map<std::string, int *> arrayTable;
 	std::map<std::string, int> arraySizeTable;
+	std::stack<Lexem *> opstack;
 };
 
-
-
-extern std::stack<int> Global_suka_stack;
+// extern Space space;
+extern std::stack<Lexem *> prevVariables;
+extern std::stack<Space> globalSpace;
+extern std::stack<Lexem *> returnFunctionStack;
 extern std::vector<Lexem *> recycle;
 extern Lexem *ptr;
+
 void print_vector(std::vector<Lexem *> infix);
 void print_vector_vector(std::vector<std::vector<Lexem *>> infix);
 void clear_vector(std::vector<Lexem *> v);

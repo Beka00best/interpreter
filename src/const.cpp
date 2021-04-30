@@ -54,3 +54,4 @@ std::string SYMBOLS[] = {
 };
 
 int OP_NUM = sizeof(SYMBOLS) / sizeof(std::string);
+int Index = 0;
