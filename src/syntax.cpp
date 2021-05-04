@@ -76,7 +76,19 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 		if (infix[i - 1] -> getLexType() == OPER && infix[i - 1] -> getType() == FUNCTION) {
 			if (!functionsTable.count(infix[i]->getName())) {
 				functionsTable[infix[i]->getName()] = row;
-				((Function *)infix[i])->setNumberArg(infix.size() - i - 3);
+				int argNum = 0;
+				if (infix[i + 1] -> getType() == LBRACKET) {
+					for (int j = i + 2; j < infix.size(); ++j) {
+						if (infix[j] -> getType() == RBRACKET) {
+							break;
+						} else {
+							argNum++;
+						}
+					}
+				}
+				functionsArgNumberTable[infix[i] -> getName()] = argNum;
+				// std::cout << argNum << std::endl;
+				// ((Function *)infix[i])->setNumberArg(infix.size() - i - 3);
 				delete infix[i];
 				delete infix[i + 1];
 				delete infix[infix.size() - 1];
@@ -90,12 +102,20 @@ void initLabels(std::vector<Lexem *> &infix, int row) {
 			if (functionsTable.count(infix[i - 1]->getName())) {
 				Function *func = new Function(infix[i - 1]->getName());
 				func->setRow(functionsTable[infix[i - 1]->getName()]);
+				// std::cout << "ARG_OF " << functionsArgNumberTable[func -> getName()] << std::endl; 
 				delete infix[i - 1];
 				infix[i - 1] = func;
 				recycle.push_back(func);
 				i++;
 			}
 		}
+		// if (infix[i - 1] -> getType() == PRINT) {
+		// 	if (functionsTable.count(infix[i]->getName())) {
+		// 		QueuePrint.push(infix.size() - 1);
+		// 		QueuePrint.push(row);
+		// 	}
+		// }
+
 	}
 }
 

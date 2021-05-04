@@ -8,6 +8,7 @@ extern std::map<std::string, int> labelsTable;
 extern std::map<std::string, int *> arrayTable;
 extern std::map<std::string, int> arraySizeTable;
 extern std::map<std::string, int> functionsTable;
+extern std::map<std::string, int> functionsArgNumberTable;
 extern std::map<std::string, int> returnRow;
 
 class Lexem {
@@ -79,6 +80,7 @@ class Array : public Lexem {
 public:
 	Array();
 	Array(std::string);
+	Array(std::string, int);
 	void setSize(int);
 	std::string getName();
 	void setIndex(int);
@@ -109,12 +111,18 @@ struct Space {
 	std::stack<Lexem *> opstack;
 };
 
+struct RetAddress {
+	int row;
+	int Index;
+};
+
 // extern Space space;
 extern std::stack<Lexem *> prevVariables;
 extern std::stack<Space> globalSpace;
 extern std::stack<Lexem *> returnFunctionStack;
 extern std::vector<Lexem *> recycle;
 extern Lexem *ptr;
+extern std::stack<RetAddress> StackReturnAddress;
 
 void print_vector(std::vector<Lexem *> infix);
 void print_vector_vector(std::vector<std::vector<Lexem *>> infix);

@@ -10,10 +10,13 @@ std::map<std::string, int> labelsTable;
 std::map<std::string, int *> arrayTable;
 std::map<std::string, int> arraySizeTable;
 std::map<std::string, int> functionsTable;
+std::map<std::string, int> functionsArgNumberTable;
 std::map<std::string, int> returnRow;
 std::stack<Lexem *> returnFunctionStack;
 std::stack<Lexem *> prevVariables;
 std::stack<Space> globalSpace;
+std::stack<RetAddress> StackReturnAddress;
+
 
 Lexem::Lexem() {}
 
@@ -48,6 +51,10 @@ Array::Array() {}
 
 Array::Array(std::string str) : Lexem(ARRTYPE) {
 	arrayName = str;
+}
+
+Array::Array(std::string str, int n) : Lexem(ARRTYPE) {
+	arraySizeTable[str] = n;
 }
 
 Function::Function() {}
@@ -145,15 +152,15 @@ int Variable::getType() {
 }
 
 int Variable::getValue() const{
-	return varTable[name];
+	return globalSpace.top().varTable[name];
 }
 
 void Variable::setValue(int value_) {
-	varTable[name] = value_;
+	globalSpace.top().varTable[name] = value_;
 }
 
 void Variable::print() {
-	std::cout << "[" << name << "(" << varTable[name] << ")" << "]";
+	std::cout << "[" << name << "(" << globalSpace.top().varTable[name] << ")" << "]";
 }
 
 bool Variable::inLabelTable() {
@@ -296,7 +303,7 @@ void print_vector_vector(std::vector<std::vector<Lexem *>> infix) {
 
 void printMap() {
 	std::cout << "VarTable" << std::endl;
-	for (std::map<std::string,int>::iterator it = varTable.begin(); it != varTable.end(); it++) {
+	for (std::map<std::string,int>::iterator it = returnRow.begin(); it != returnRow.end(); it++) {
 		std::cout << it->first << " = " << it->second << std::endl;
 	}
 }
