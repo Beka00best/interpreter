@@ -1,7 +1,7 @@
 function a(n)
-if a == 0
+if n == 0
 	return 1
-else 
+else
 	return n*a(n-1)
 endif
 print a(3)
