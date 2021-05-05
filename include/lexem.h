@@ -9,7 +9,6 @@ extern std::map<std::string, int *> arrayTable;
 extern std::map<std::string, int> arraySizeTable;
 extern std::map<std::string, int> functionsTable;
 extern std::map<std::string, int> functionsArgNumberTable;
-extern std::map<std::string, int> returnRow;
 
 class Lexem {
 public:

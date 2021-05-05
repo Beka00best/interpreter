@@ -11,7 +11,6 @@ std::map<std::string, int *> arrayTable;
 std::map<std::string, int> arraySizeTable;
 std::map<std::string, int> functionsTable;
 std::map<std::string, int> functionsArgNumberTable;
-std::map<std::string, int> returnRow;
 std::stack<Lexem *> returnFunctionStack;
 std::stack<Lexem *> prevVariables;
 std::stack<Space> globalSpace;
@@ -303,7 +302,7 @@ void print_vector_vector(std::vector<std::vector<Lexem *>> infix) {
 
 void printMap() {
 	std::cout << "VarTable" << std::endl;
-	for (std::map<std::string,int>::iterator it = returnRow.begin(); it != returnRow.end(); it++) {
+	for (std::map<std::string,int>::iterator it = globalSpace.top().varTable.begin(); it != globalSpace.top().varTable.end(); it++) {
 		std::cout << it->first << " = " << it->second << std::endl;
 	}
 }

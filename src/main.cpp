@@ -38,7 +38,7 @@ int main() {
 	int row = findMain(postfix);
 	// std::cout << "row " << row << std::endl;
 	while (0 <= row and row < (int)postfix.size()) {
-		std::cout << "row eval: " << row << std::endl;
+		// std::cout << "row eval: " << row << std::endl;
 		row = evaluatePoliz(postfix, row, &value);
 	}
 	// std::cout << "eval:" << std::endl;

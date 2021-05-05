@@ -16,7 +16,6 @@ int evaluatePoliz(std::vector<std::vector<Lexem *>> postfix, int row, int *mainv
 		StackReturnAddress.pop();
 	}
 	for (; i < poliz.size(); ++i) {
-		std::cout << "Index " << i << std::endl;
 		if (poliz[i] == nullptr) {
 			continue;
 		}
@@ -29,73 +28,37 @@ int evaluatePoliz(std::vector<std::vector<Lexem *>> postfix, int row, int *mainv
 			Retadd.row = row;
 			StackReturnAddress.push(Retadd);
 			for (int j = 0; j < functionsArgNumberTable[poliz[i] ->getName()]; j++) {
-				// prevVariables.push(globalSpace.top().opstack.top());
-				// Number *tmp = new Number(*mainval);
 				Number *tmp = new Number((globalSpace.top().opstack.top())->getValue());
-				// tmp->print();
 				prevVariables.push(tmp);
 				recycle.push_back(tmp);
-				// std::cout << "Value: " << *mainval << std::endl; 
 				globalSpace.top().opstack.pop();
 			}
-			std::cout << "ROW " << ((Function *)poliz[i])->getRow() << std::endl;
 			return ((Function *)poliz[i])->getRow();
 		case ARRTYPE:
 		case TYPE_VAR:
 		case NUMBER:
-			// std::cout << "OK Lex" << std::endl;
 			globalSpace.top().opstack.push(poliz[i]);
 			break;
 		case OPER:
 			if (poliz[i]->getType() == FUNCTION) {
 				Space spaceLocal;
-				std::cout << "FUNCTION" << std::endl;
+				// std::cout << "FUNCTION" << std::endl;
 				while (!prevVariables.empty()) {
 					i--;
-					if (globalSpace.top().opstack.empty()) {
-						// std::cout << "OK" << std::endl;
-					}
-					// if (prevVariables.top()->getLexType() == TYPE_VAR) {
-
-						// spaceLocal.varTable[globalSpace.top().opstack.top() -> getName()] = globalSpace.top().varTable[prevVariables.top()->getName()];
-						spaceLocal.varTable[globalSpace.top().opstack.top() -> getName()] = prevVariables.top()->getValue();
-						
-						// std::cout << "OK " << i << std::endl;
-						globalSpace.top().opstack.pop();
-					// }
+					spaceLocal.varTable[globalSpace.top().opstack.top() -> getName()] = prevVariables.top()->getValue();
+					globalSpace.top().opstack.pop();
 					prevVariables.pop();
 				}
-				// varTable.clear();
-				// varTable = spaceLocal.varTable;
 				globalSpace.push(spaceLocal);
-				// std::cout << "OK" << std::endl;
 				return row + 1;
 			}
 			if (poliz[i]->getType() == RETURN) {
-				if (globalSpace.top().opstack.empty()) {
-					// std::cout << "OK" << std::endl;
-				}
 				returnFlag = true;
-				// (globalSpace.top().opstack.top())->print();
-				// std::cout << returnFlag << std::endl;
-				// std::cout << "OK" << std::endl;
 				Number *tmp = new Number((globalSpace.top().opstack.top())->getValue());
 				recycle.push_back(tmp);
-				// Number *tmp1 = new Number(tmp->getValue());
-				// Lexem *tmp = poliz[i - 1];
-				tmp->print();
-				// std::cout << "OK" << std::endl;
-				// globalSpace.top().opstack.pop();
 				globalSpace.pop();
-				// std::cout << "OK" << std::endl;
-				if (globalSpace.empty()) {
-					std::cout << "NOT" << std::endl;
-				}
 				globalSpace.top().opstack.push(tmp);
-				// int ret = returnRow[returnFunctionStack.top()->getName()];
 				int ret = StackReturnAddress.top().row;
-				// StackReturnAddress.pop();
-				std::cout << "RET " << ret << std::endl;
 				returnFunctionStack.pop();
 				return ret;
 			}
@@ -121,7 +84,6 @@ int evaluatePoliz(std::vector<std::vector<Lexem *>> postfix, int row, int *mainv
 			globalSpace.top().opstack.pop();
 			l = globalSpace.top().opstack.top();
 			globalSpace.top().opstack.pop();
-			// std::cout << "AGGA" << std::endl;
 			if (poliz[i]->getType() == LVALUE) {
 				Lexem *arrayElem = new Array(globalSpace.top().opstack.top()->getName());
 				globalSpace.top().opstack.pop();
@@ -141,7 +103,6 @@ int evaluatePoliz(std::vector<std::vector<Lexem *>> postfix, int row, int *mainv
 			break;
 		}
 	}
-	// Index = 0;
 	returnFlag = false;
 	if (!globalSpace.top().opstack.empty()) {
 		value = globalSpace.top().opstack.top()->getValue();

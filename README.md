@@ -18,8 +18,9 @@ For fun!
 5. [If](#If) :white_check_mark: 
 6. [While](#While) :white_check_mark:  
 7. [Array](#Array) :white_check_mark: 
-8. Functions
-9. Stack
+8. [Functions](#Functions) :white_check_mark:  
+9. [Stack](#Stack) :white_check_mark:
+
 
 ## Download
 Install the dependencies
