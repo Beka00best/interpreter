@@ -1,0 +1,8 @@
+function a(n)
+if a == 0
+	return 1
+else 
+	return n*a(n-1)
+endif
+print a(3)
+exit
